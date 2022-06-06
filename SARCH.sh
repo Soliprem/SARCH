@@ -236,7 +236,7 @@ sed -i "/^#ParallelDownloads/s/=.*/= 5/;s/^#Color$/Color/" /etc/pacman.conf
 # Use all cores for compilation.
 sed -i "s/-j2/-j$(nproc)/;/^#MAKEFLAGS/s/^#//" /etc/makepkg.conf
 
-manualinstall yay || error "Failed to install AUR helper."
+manualinstall paru || error "Failed to install AUR helper."
 
 # The command that does all the installing. Reads the progs.csv file and
 # installs each needed program the way required. Be sure to run this only after
