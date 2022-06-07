@@ -302,12 +302,16 @@ sudo -u "$name" pulseaudio --start
 newperms "%wheel ALL=(ALL) ALL #SARCH
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/packer -Syu,/usr/bin/packer -Syyu,/usr/bin/systemctl restart NetworkManager,/usr/bin/rc-service NetworkManager restart,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/loadkeys,/usr/bin/paru,/usr/bin/pacman -Syyuw --noconfirm"
 
+# Downloading wallpapers
+git clone https://github.com/Soliprem/wallpapers "$repodir"/wallpapers
+ln -s "$repodir"/wallpapers/thiemeyer_road_to_samarkand.jpg /home/"$name"/.config/bg
+
 # Moving stuff to the right directories
-sudo mkdir "$HOME"/.local/share/dwm
-sudo mv "$repodir"/suckless/dwm/to_local_autostart.sh "$HOME"/.local/share/dwm/autostart.sh
+sudo mkdir /home/"$name"/.local/share/dwm
+sudo mv "$repodir"/suckless/dwm/to_local_autostart.sh /home/"$name"/.local/share/dwm/autostart.sh
 sudo mkdir /usr/share/xsessions
 sudo mv "$repodir"/suckless/dwm/dwm.desktop /usr/share/xsessions/
-sudo mv "$repodir"/suckless "$HOME/.config/suckless"
+sudo mv "$repodir"/suckless /home/"$name"/.config/suckless
 
 # Enabling ly
 sudo systemctl enable ly.service
