@@ -66,9 +66,12 @@ adduserandpass() {
 	dialog --infobox "Adding user \"$name\"..." 4 50
 	useradd -m -G wheel -s /bin/zsh "$name" >/dev/null 2>&1 ||
 		usermod -a -G wheel "$name" && mkdir -p /home/"$name" && chown "$name":wheel /home/"$name"
-	export repodir="/home/$name/.config/"
+	export repodir="/home/$name/.local/src"
+	export sucklessdir="/home/$name/.config"
 	mkdir -p "$repodir"
 	chown -R "$name":wheel "$(dirname "$repodir")"
+	mkdir -p "$sucklessdir"
+	chown -R "$name":wheel "$(dirname "$sucklessdir")"
 	echo "$name:$pass1" | chpasswd
 	unset pass1 pass2
 }
