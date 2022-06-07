@@ -303,11 +303,11 @@ newperms "%wheel ALL=(ALL) ALL #SARCH
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/packer -Syu,/usr/bin/packer -Syyu,/usr/bin/systemctl restart NetworkManager,/usr/bin/rc-service NetworkManager restart,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/loadkeys,/usr/bin/paru,/usr/bin/pacman -Syyuw --noconfirm"
 
 # Moving stuff to the right directories
-mkdir "$HOME"/.local/dwm
-mv "$repodir"/suckless/dwm/to_local_autostart.sh "$HOME"/.local/dwm/autostart.sh
+sudo mkdir "$HOME"/.local/share/dwm
+sudo mv "$repodir"/suckless/dwm/to_local_autostart.sh "$HOME"/.local/share/dwm/autostart.sh
 sudo mkdir /usr/share/xsessions
-mv "$repodir"/suckless/dwm/dwm.desktop /usr/share/xsessions/
-mv "$repodir"/suckless "$HOME/.config/suckless"
+sudo mv "$repodir"/suckless/dwm/dwm.desktop /usr/share/xsessions/
+sudo mv "$repodir"/suckless "$HOME/.config/suckless"
 
 # Enabling ly
 sudo systemctl enable ly.service
