@@ -67,11 +67,8 @@ adduserandpass() {
 	useradd -m -G wheel -s /bin/zsh "$name" >/dev/null 2>&1 ||
 		usermod -a -G wheel "$name" && mkdir -p /home/"$name" && chown "$name":wheel /home/"$name"
 	export repodir="/home/$name/.local/src"
-	export sucklessdir="/home/$name/.config"
 	mkdir -p "$repodir"
 	chown -R "$name":wheel "$(dirname "$repodir")"
-	mkdir -p "$sucklessdir"
-	chown -R "$name":wheel "$(dirname "$sucklessdir")"
 	echo "$name:$pass1" | chpasswd
 	unset pass1 pass2
 }
@@ -119,7 +116,7 @@ maininstall() { # Installs all needed programs from main repo.
 	installpkg "$1"
 }
 
-gitmakeinstall() {
+sucklessinstall() {
 	progname="$(basename "$1" .git)"
 	dir="$repodir/$progname"
 	dialog --title "SARCH Installation" --infobox "Installing \`$progname\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
@@ -129,6 +126,20 @@ gitmakeinstall() {
 	}
 	cd "$dir" || exit 1
 	sh build.sh
+	cd /tmp || return 1
+}
+
+gitmakeinstall() {
+	progname="$(basename "$1" .git)"
+	dir="$repodir/$progname"
+	dialog --title "LARBS Installation" --infobox "Installing \`$progname\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
+	sudo -u "$name" git clone --depth 1 "$1" "$dir" >/dev/null 2>&1 || {
+		cd "$dir" || return 1
+		sudo -u "$name" git pull --force origin master
+	}
+	cd "$dir" || exit 1
+	make clean build >/dev/null 2>&1
+	make install >/dev/null 2>&1
 	cd /tmp || return 1
 }
 
@@ -153,6 +164,7 @@ installationloop() {
 		echo "$comment" | grep -q "^\".*\"$" && comment="$(echo "$comment" | sed "s/\(^\"\|\"$\)//g")"
 		case "$tag" in
 		"A") aurinstall "$program" "$comment" ;;
+		"S") sucklessinstall "$program" "$comment" ;;
 		"G") gitmakeinstall "$program" "$comment" ;;
 		"P") pipinstall "$program" "$comment" ;;
 		*) maininstall "$program" "$comment" ;;
@@ -290,7 +302,16 @@ sudo -u "$name" pulseaudio --start
 newperms "%wheel ALL=(ALL) ALL #SARCH
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/packer -Syu,/usr/bin/packer -Syyu,/usr/bin/systemctl restart NetworkManager,/usr/bin/rc-service NetworkManager restart,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/loadkeys,/usr/bin/paru,/usr/bin/pacman -Syyuw --noconfirm"
 
+# Moving stuff to the right directories
+mkdir "$HOME"/.local/dwm
+mv "$repodir"/suckless/dwm/to_local_autostart.sh "$HOME"/.local/dwm/autostart.sh
+sudo mkdir /usr/share/xsessions
+mv "$repodir"/suckless/dwm/dwm.desktop /usr/share/xsessions/
+mv "$repodir"/suckless "$HOME/.config/suckless"
+
+# Enabling ly
+sudo systemctl enable ly.service
+
 # Last message! Install complete!
-sudo -u "$name" systemctl enable ly.service
 finalize
 clear
