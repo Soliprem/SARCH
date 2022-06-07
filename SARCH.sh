@@ -1,7 +1,6 @@
-#!/bin/bash
-
-# Soli's Auto Rice Boostrapping Script
-# by Soli, by Francesco Prem Solidoro
+#!/bin/sh
+# Soli's Auto Rice Boostrapping Script (SARCH)
+# by Soli
 # License: GNU GPLv3
 
 ### OPTIONS AND VARIABLES ###
@@ -30,7 +29,7 @@ error() {
 }
 
 welcomemsg() {
-	dialog --title "Welcome!" --msgbox "Welcome to Soli's Auto-Rice Bootstrapping Script!\\n\\nThis script will automatically install a fully-featured Linux desktop, which I use as my main machine. It's a close fork of Luke's LARBS, deployed for my personal use\\n\\n-Soliprem" 10 60
+	dialog --title "Welcome!" --msgbox "Welcome to Soli's Auto-Rice Bootstrapping Script!\\n\\nThis script will automatically install a fully-featured Linux desktop, which I use as my main machine. It's a close fork of Luke's SARCH, deployed for my personal use\\n\\n-Soliprem" 10 60
 
 	dialog --colors --title "Important Note!" --yes-label "All ready!" --no-label "Return..." --yesno "Be sure the computer you are using has current pacman updates and refreshed Arch keyrings.\\n\\nIf it does not, the installation of some programs might fail." 8 70
 }
@@ -67,7 +66,7 @@ adduserandpass() {
 	dialog --infobox "Adding user \"$name\"..." 4 50
 	useradd -m -G wheel -s /bin/zsh "$name" >/dev/null 2>&1 ||
 		usermod -a -G wheel "$name" && mkdir -p /home/"$name" && chown "$name":wheel /home/"$name"
-	export repodir="/home/$name/.local/src"
+	export repodir="/home/$name/.config/"
 	mkdir -p "$repodir"
 	chown -R "$name":wheel "$(dirname "$repodir")"
 	echo "$name:$pass1" | chpasswd
@@ -126,18 +125,8 @@ gitmakeinstall() {
 		sudo -u "$name" git pull --force origin master
 	}
 	cd "$dir" || exit 1
-	if test -f Makefile; then
-		make >/dev/null 2>&1
-		make install >/dev/null 2>&1
-		cd /tmp || return 1
-	else
-		for i in */; do
-			cd "$i" || exit 1
-			make >/dev/null 2>&1
-			make install >/dev/null 2>&l
-			cd ..
-		done
-	fi
+	sh build.sh
+	cd /tmp || return 1
 }
 
 aurinstall() {
@@ -251,13 +240,14 @@ yes | sudo -u "$name" $aurhelper -S libxft-bgra-git >/dev/null 2>&1
 putgitrepo "$dotfilesrepo" "/home/$name" "$repobranch"
 rm -f "/home/$name/README.md" "/home/$name/LICENSE" "/home/$name/FUNDING.yml"
 # Create default urls file if none exists.
-[ ! -f "/home/$name/.config/newsboat/urls" ] && echo "http://lukesmith.xyz/rss.xml
-https://videos.lukesmith.xyz/feeds/videos.xml?videoChannelId=2
-https://lindypress.net/rss.xml
-https://notrelated.xyz/rss.xml
-https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA \"~Luke Smith (YouTube)\"
-https://artixlinux.org/feed.php "tech"
-https://www.archlinux.org/feeds/news/" >"/home/$name/.config/newsboat/urls"
+[ ! -f "/home/$name/.config/newsboat/urls" ] && echo "http://morss.it/https://feeds.bbci.co.uk/news/rss.xml
+https://www.archlinux.org/feeds/news/ "tech"
+https://rss.nytimes.com/services/xml/rss/nyt/Economy.xml
+https://morss.it/https://rss.nytimes.com/services/xml/rss/nyt/Economy.xml
+https://morss.it/https://www.economist.com/finance-and-economics/rss.xml
+https://morss.it/https://www.economist.com/science-and-technology/rss.xml
+https://morss.it/https://www.economist.com/leaders/rss.xml
+https://morss.it/https://news.mit.edu/rss/research" >"/home/$name/.config/newsboat/urls"
 # make git ignore deleted LICENSE & README.md files
 git update-index --assume-unchanged "/home/$name/README.md" "/home/$name/LICENSE" "/home/$name/FUNDING.yml"
 
@@ -298,6 +288,6 @@ newperms "%wheel ALL=(ALL) ALL #SARCH
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/packer -Syu,/usr/bin/packer -Syyu,/usr/bin/systemctl restart NetworkManager,/usr/bin/rc-service NetworkManager restart,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/loadkeys,/usr/bin/paru,/usr/bin/pacman -Syyuw --noconfirm"
 
 # Last message! Install complete!
-sudo systemctl enable ly.service
+sudo -u "$name" systemctl enable ly.service
 finalize
 clear
