@@ -311,7 +311,7 @@ sudo mkdir /home/"$name"/.local/share/dwm
 sudo mv "$repodir"/suckless/dwm/to_local_autostart.sh /home/"$name"/.local/share/dwm/autostart.sh
 sudo mkdir /usr/share/xsessions
 sudo mv "$repodir"/suckless/dwm/dwm.desktop /usr/share/xsessions/
-sudo mv "$repodir"/suckless /home/"$name"/.config/suckless
+# sudo mv "$repodir"/suckless /home/"$name"/.config/suckless
 
 # Enabling ly
 sudo systemctl enable ly.service
