@@ -8,6 +8,8 @@
 # A,paru, "better AUR helper, only available in AUR"
 A,nvim-packer-git,"neovim plugin manager written in lua"
 ,ueberzug,"enables previews in the lf file manager."
+,alacritty,"a great terminal emulator"
+A,rofi-lbonn-wayland,"a dmenu replacement that works under wayland and x, and has better customisability"
 A,vifmimg-git, "is a pretty awesome file manager"
 ,bc,"is used for a dropdown calculator."
 ,xcompmgr,"is for transparency and removing screen-tearing."
